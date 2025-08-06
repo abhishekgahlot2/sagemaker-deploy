@@ -47,10 +47,12 @@ class SageMakerDeployer:
             print(f"Instance type: {instance_type}")
             print(f"Endpoint name: {endpoint_name}")
             
-            # Create HuggingFace Model
+            # Create HuggingFace Model with custom inference script for quantization
             huggingface_model = HuggingFaceModel(
                 model_data=None,
                 role=self.role,
+                source_dir='code',  # Use custom inference script
+                entry_point='inference.py',  # Custom inference with quantization
                 transformers_version="4.49.0",
                 pytorch_version="2.6.0",
                 py_version="py312",
@@ -61,7 +63,7 @@ class SageMakerDeployer:
                     'SAGEMAKER_MODEL_SERVER_TIMEOUT': os.getenv('MODEL_SERVER_TIMEOUT', '600'),
                     'SAGEMAKER_MODEL_SERVER_WORKERS': '1',
                     'MAX_CONTEXT_LENGTH': os.getenv('MAX_CONTEXT_LENGTH', '4096'),
-                    'MAX_NEW_TOKENS': os.getenv('MAX_NEW_TOKENS', '512'),
+                    'MAX_NEW_TOKENS': os.getenv('MAX_NEW_TOKENS', '50'),
                     'SM_NUM_GPUS': '1',
                     'TRUST_REMOTE_CODE': 'true',
                     'PYTORCH_CUDA_ALLOC_CONF': 'expandable_segments:True',
